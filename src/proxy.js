@@ -16,8 +16,7 @@ if(!session) {
 
 }
  
-// Alternatively, you can use a default export:
-// export default function proxy(request) { ... }
+
  
 export const config = {
   matcher: ['/my-bookings/:path*',
