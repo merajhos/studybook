@@ -31,7 +31,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Available Rooms Section */}
       <AvailableRooms />
     </main>
   );

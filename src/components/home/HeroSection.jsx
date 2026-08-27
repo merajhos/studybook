@@ -9,12 +9,12 @@ import {
 const HeroSection = () => {
   return (
     <section className="relative overflow-hidden bg-slate-950 text-white">
-      {/* Background decoration */}
+  
       <div className="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-cyan-500/20 blur-3xl" />
       <div className="absolute -bottom-40 -left-20 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl" />
 
       <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-5 py-20 md:px-8 lg:grid-cols-2 lg:py-28">
-        {/* Left */}
+    
         <div>
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300">
             <BookOpen size={16} />
@@ -51,7 +51,7 @@ const HeroSection = () => {
             </Link>
           </div>
 
-          {/* Small stats */}
+    
           <div className="mt-10 grid max-w-xl grid-cols-3 gap-4 border-t border-white/10 pt-8">
             <div>
               <p className="text-2xl font-bold text-white">24/7</p>
@@ -76,7 +76,7 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Right visual */}
+
         <div className="relative">
           <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-4 shadow-2xl backdrop-blur">
             <div className="overflow-hidden rounded-2xl">

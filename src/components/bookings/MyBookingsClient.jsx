@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
+import { VscTwitter } from 'react-icons/vsc';
 
 export default function MyBookingsClient({ initialBookings, userProfile, token }) {
   const [bookings, setBookings] = useState(initialBookings || []);
@@ -11,7 +12,7 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
 
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
-  // Booking Cancel Handler
+
   const handleCancelBooking = async (id) => {
     if (!window.confirm('Are you sure you want to cancel this booking?')) return;
 
@@ -39,7 +40,7 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
     }
   };
 
-  // খালি বুকিং লিস্টের সঠিক মেসেজ
+
   if (!bookings || bookings.length === 0) {
     return (
       <div className="text-center py-20 bg-slate-50 dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-800">
@@ -59,7 +60,7 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
           key={booking._id}
           className="flex flex-col sm:flex-row bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
         >
-          {/* Room Image */}
+
           <div className="relative w-full sm:w-64 h-48 sm:h-auto bg-slate-100 dark:bg-slate-800 flex-shrink-0">
             <Image
               src={booking.roomImage || booking.room?.image || 'https://images.unsplash.com/photo-1497366216548-37526070297c'}
@@ -69,7 +70,7 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
             />
           </div>
 
-          {/* Booking Info */}
+
           <div className="p-6 flex-1 flex flex-col justify-between">
             <div>
               <div className="flex justify-between items-start mb-3">
@@ -99,7 +100,7 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
               </div>
             </div>
 
-            {/* Actions */}
+     
             <div className="flex flex-wrap justify-end items-center gap-3 mt-5 pt-4 border-t border-slate-100 dark:border-slate-800">
               <button
                 onClick={() => setSelectedBooking(booking)}
@@ -120,11 +121,11 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
         </div>
       ))}
 
-      {/* VIEW PROFILE & DETAILS MODAL (WITH EXIT) */}
+  
       {selectedBooking && (
         <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 border border-slate-200 dark:border-slate-800">
-            {/* Modal Header & Exit Cross Button */}
+            
             <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-4">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                 Booking Profile & Info
@@ -134,11 +135,11 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
                 className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-300 font-bold transition"
                 title="Exit"
               >
-                ✕
+                <VscTwitter size={17} />
+
               </button>
             </div>
 
-            {/* Profile Info */}
             <div className="bg-indigo-50/60 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50 p-4 rounded-2xl space-y-1">
               <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-2">Booked By (User Profile)</p>
               <div className="flex items-center gap-3">
@@ -156,7 +157,7 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
               </div>
             </div>
 
-            {/* Booking Specifics */}
+       
             <div className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
               <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-slate-400">Room Name:</span>
@@ -188,7 +189,6 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
               </div>
             </div>
 
-            {/* Exit Button */}
             <div className="flex justify-end pt-2">
               <button
                 onClick={() => setSelectedBooking(null)}
