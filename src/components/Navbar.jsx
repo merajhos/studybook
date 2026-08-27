@@ -20,12 +20,12 @@ export default function Navbar() {
     <nav className="bg-white border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          {/* Logo */}
+          
           <Link href="/" className="text-2xl font-black text-indigo-600">
             Home-StudyNook
           </Link>
 
-          {/* Navigation Links */}
+         
           <div className="flex items-center gap-6">
             <Link href="/rooms" className="text-slate-600 hover:text-indigo-600 font-medium text-sm">
               All Rooms
@@ -42,7 +42,7 @@ export default function Navbar() {
                       My Bookings
                     </Link>
 
-                    {/* User Profile / Logout */}
+                  
                     <div className="flex items-center gap-3 ml-2">
                       {session.user?.image ? (
                         <img

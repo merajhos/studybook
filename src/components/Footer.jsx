@@ -9,10 +9,9 @@ const Footer = () => {
     <footer className="mt-20 bg-slate-950 text-slate-400">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         
-        {/* Top */}
+        
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-          
-          {/* Brand */}
+        
           <div className="lg:col-span-1">
             <Link href="/" className="inline-flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-500 text-white">
@@ -35,7 +34,7 @@ const Footer = () => {
               space for focused learning.
             </p>
 
-            {/* Social */}
+        
             <div className="mt-6 flex items-center gap-2">
               <a
                 href="#"
@@ -71,7 +70,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Useful Links */}
           <div>
             <h3 className="mb-5 text-sm font-semibold uppercase tracking-wider text-white">
               Explore
@@ -107,7 +105,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Account */}
+       
           <div>
             <h3 className="mb-5 text-sm font-semibold uppercase tracking-wider text-white">
               Account
@@ -152,7 +150,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
             <h3 className="mb-5 text-sm font-semibold uppercase tracking-wider text-white">
               Contact
@@ -203,7 +200,7 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom */}
+    
         <div className="mt-12 flex flex-col justify-between gap-4 border-t border-slate-800 pt-6 sm:flex-row sm:items-center">
           <p className="text-xs text-slate-500">
             © 2026 StudyNook. All rights reserved.

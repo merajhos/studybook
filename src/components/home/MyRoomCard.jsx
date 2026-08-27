@@ -40,7 +40,7 @@ export default function MyRoomCard({ room, onRefresh }) {
         onSuccess={onRefresh}
       />
 
-      {/* Delete Alert Modal */}
+      {/* Delete Modal */}
       <DeleteRoomAlert
         roomId={room._id}
         isOpen={isDeleteOpen}
