@@ -3,6 +3,7 @@ import { ArrowUpRight, BookOpen, Mail, MapPin, Phone } from "lucide-react";
 import { FaFacebook } from "react-icons/fa";
 import { LiaLinkedin } from "react-icons/lia";
 import { BsInstagram } from "react-icons/bs";
+import { FaXTwitter } from "react-icons/fa6";
 
 const Footer = () => {
   return (
@@ -49,7 +50,7 @@ const Footer = () => {
                 aria-label="X"
                 className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-800 text-sm font-bold transition hover:border-cyan-500 hover:bg-cyan-500 hover:text-white"
               >
-                𝕏
+               <FaXTwitter size={17} />
               </a>
 
               <a

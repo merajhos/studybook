@@ -33,13 +33,13 @@ export default function BookingModal({ room, isOpen, onClose }) {
     setLoading(true);
 
     try {
-      // 👉 ১. Better Auth থেকে Session এবং Token বের করা
+      
       const sessionRes = await authClient.getSession();
       const token = sessionRes?.data?.session?.token || sessionRes?.data?.session?.id;
 
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
       
-      // 👉 ২. হেডার সেটআপ (Token থাকলে Authorization পাঠাবে, পাশাপাশি Cookies এর জন্য credentials: include)
+   
       const headers = {
         'Content-Type': 'application/json',
       };
@@ -51,7 +51,7 @@ export default function BookingModal({ room, isOpen, onClose }) {
       const res = await fetch(`${baseUrl}/bookings`, {
         method: 'POST',
         headers: headers,
-        credentials: 'include', // Cookies পাস করার জন্য
+        credentials: 'include', 
         body: JSON.stringify({
           roomId: room._id,
           roomName: room.name || room.title,

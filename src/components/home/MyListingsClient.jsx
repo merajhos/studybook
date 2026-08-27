@@ -13,7 +13,7 @@ export default function MyListingsClient({ initialRooms, token, userProfile }) {
   const [editFormData, setEditFormData] = useState({ name: '', description: '', price: '' });
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
-  // Edit Modal Open
+  // Edit 
   const handleOpenEdit = (room) => {
     setEditingRoom(room);
     setEditFormData({
@@ -23,7 +23,7 @@ export default function MyListingsClient({ initialRooms, token, userProfile }) {
     });
   };
 
-  // Update Room Handler
+
   const handleUpdateRoom = async (e) => {
     e.preventDefault();
     try {
@@ -51,7 +51,6 @@ export default function MyListingsClient({ initialRooms, token, userProfile }) {
     }
   };
 
-  // Delete Room Handler
   const handleDeleteRoom = async () => {
     try {
       const res = await fetch(`${baseUrl}/rooms/${deletingRoomId}`, {
@@ -115,8 +114,7 @@ export default function MyListingsClient({ initialRooms, token, userProfile }) {
             >
               View Profile
             </button>
-            
-            {/* 👉 Edit এবং Delete বাটন এখানে রয়েছে */}
+          
             <div className="flex gap-2">
               <button
                 onClick={() => handleOpenEdit(room)}
@@ -135,7 +133,7 @@ export default function MyListingsClient({ initialRooms, token, userProfile }) {
         </div>
       ))}
 
-      {/* PROFILE VIEW MODAL */}
+
       {viewingRoom && (
         <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
           <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 border border-slate-200 dark:border-slate-800">
@@ -187,7 +185,7 @@ export default function MyListingsClient({ initialRooms, token, userProfile }) {
         </div>
       )}
 
-      {/* EDIT MODAL */}
+      
       {editingRoom && (
         <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
           <form onSubmit={handleUpdateRoom} className="bg-white dark:bg-slate-900 p-6 rounded-2xl max-w-lg w-full space-y-4 shadow-2xl">
@@ -236,7 +234,7 @@ export default function MyListingsClient({ initialRooms, token, userProfile }) {
         </div>
       )}
 
-      {/* DELETE MODAL */}
+     
       {deletingRoomId && (
         <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
           <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl max-w-sm w-full text-center space-y-4 shadow-2xl">

@@ -16,7 +16,7 @@ export default function MyRoomCard({ room, onRefresh }) {
         <p className="text-slate-500 text-sm">${room.hourlyRate}/hr</p>
       </div>
 
-      {/* Action Buttons */}
+    
       <div className="flex gap-2 mt-4">
         <button
           onClick={() => setIsEditOpen(true)}
@@ -32,7 +32,7 @@ export default function MyRoomCard({ room, onRefresh }) {
         </button>
       </div>
 
-      {/* Edit Modal */}
+     
       <EditRoomModal
         room={room}
         isOpen={isEditOpen}
@@ -40,7 +40,7 @@ export default function MyRoomCard({ room, onRefresh }) {
         onSuccess={onRefresh}
       />
 
-      {/* Delete Modal */}
+
       <DeleteRoomAlert
         roomId={room._id}
         isOpen={isDeleteOpen}
