@@ -42,7 +42,7 @@ export default async function MyBookingsPage() {
         </p>
       </div>
 
-      {/* 👉 নিশ্চিত করুন এখানে MyBookingsClient রয়েছে, MyListingsClient নয় */}
+ 
       <MyBookingsClient 
         initialBookings={initialBookings} 
         token={token} 
