@@ -11,7 +11,7 @@ export default function MyListingsClient({ initialRooms, token, userProfile }) {
   const [viewingRoom, setViewingRoom] = useState(null);
 
   const [editFormData, setEditFormData] = useState({ name: '', description: '', price: '' });
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL ;
 
   
   const handleOpenEdit = (room) => {
