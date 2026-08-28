@@ -7,7 +7,7 @@ const AvailableRooms = async () => {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
 
   try {
-
+   
     const res = await fetch(`${baseUrl}/rooms?limit=6`, {
       next: { revalidate: 0 },
     });
