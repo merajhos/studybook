@@ -45,7 +45,7 @@ export default function AddRoomForm() {
       }
 
       // API Call
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://study-server-eight.vercel.app';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL ;
       const res = await fetch(`${apiUrl}/rooms`, {
         method: 'POST',
         headers: headers,
