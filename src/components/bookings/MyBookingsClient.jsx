@@ -17,18 +17,26 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
 
     setCancellingId(id);
     try {
+      // 安全 Token validation & header construction
+      const headers = {
+        'Content-Type': 'application/json',
+      };
+
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const res = await fetch(`${baseUrl}/bookings/${id}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: headers,
+        credentials: 'include',
       });
 
       if (res.ok) {
         toast.success('Booking cancelled successfully!');
         setBookings((prev) => prev.filter((b) => b._id !== id));
       } else {
-        const errorData = await res.json();
+        const errorData = await res.json().catch(() => ({}));
         toast.error(errorData.message || 'Failed to cancel booking');
       }
     } catch (err) {
@@ -39,7 +47,7 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
     }
   };
 
-  // খালি বুকিং লিস্টের সঠিক মেসেজ
+  // খালি বুকিং লিস্ট UI
   if (!bookings || bookings.length === 0) {
     return (
       <div className="text-center py-20 bg-slate-50 dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-800">
@@ -65,7 +73,9 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
               src={booking.roomImage || booking.room?.image || 'https://images.unsplash.com/photo-1497366216548-37526070297c'}
               alt={booking.roomName || 'Room'}
               fill
+              sizes="(max-width: 640px) 100vw, 256px"
               className="object-cover"
+              unoptimized
             />
           </div>
 
@@ -120,11 +130,11 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
         </div>
       ))}
 
-      {/* VIEW PROFILE & DETAILS MODAL (WITH EXIT) */}
+      {/* VIEW PROFILE & DETAILS MODAL */}
       {selectedBooking && (
         <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 border border-slate-200 dark:border-slate-800">
-            {/* Modal Header & Exit Cross Button */}
+            {/* Modal Header & Exit Button */}
             <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-4">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                 Booking Profile & Info
@@ -143,10 +153,17 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
               <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-2">Booked By (User Profile)</p>
               <div className="flex items-center gap-3">
                 {userProfile?.image ? (
-                  <Image src={userProfile.image} alt="User Profile" width={44} height={44} className="rounded-full border border-indigo-200" />
+                  <Image 
+                    src={userProfile.image} 
+                    alt="User Profile" 
+                    width={44} 
+                    height={44} 
+                    className="rounded-full border border-indigo-200 object-cover" 
+                    unoptimized
+                  />
                 ) : (
                   <div className="w-11 h-11 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-lg">
-                    {userProfile?.name ? userProfile.name[0] : 'U'}
+                    {userProfile?.name ? userProfile.name[0].toUpperCase() : 'U'}
                   </div>
                 )}
                 <div>
@@ -188,7 +205,7 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
               </div>
             </div>
 
-            {/* Exit Button */}
+            {/* Close Button */}
             <div className="flex justify-end pt-2">
               <button
                 onClick={() => setSelectedBooking(null)}

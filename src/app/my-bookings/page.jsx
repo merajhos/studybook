@@ -11,13 +11,16 @@ export default async function MyBookingsPage() {
     redirect('/login');
   }
 
+  // Token safely extract করা
   const tokenData = await auth.api.getToken({ headers: reqHeaders });
-  const token = tokenData?.token;
+  const rawToken = typeof tokenData === 'string' ? tokenData : tokenData?.token;
+  const token = typeof rawToken === 'object' ? rawToken?.token || '' : rawToken || '';
 
   let initialBookings = [];
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings/my-bookings`, {
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
       cache: 'no-store',
@@ -26,6 +29,8 @@ export default async function MyBookingsPage() {
     if (res.ok) {
       const data = await res.json();
       initialBookings = Array.isArray(data) ? data : data?.bookings || [];
+    } else {
+      console.error('Fetch bookings returned status:', res.status);
     }
   } catch (error) {
     console.error('Failed to fetch initial bookings:', error);
@@ -42,7 +47,6 @@ export default async function MyBookingsPage() {
         </p>
       </div>
 
-      {/* 👉 নিশ্চিত করুন এখানে MyBookingsClient রয়েছে, MyListingsClient নয় */}
       <MyBookingsClient 
         initialBookings={initialBookings} 
         token={token} 
