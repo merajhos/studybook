@@ -4,11 +4,12 @@ import RoomCard from "./RoomCard";
 
 const AvailableRooms = async () => {
   let rooms = [];
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
 
   try {
+
     const res = await fetch(`${baseUrl}/rooms?limit=6`, {
-      cache: "no-store",
+      next: { revalidate: 0 },
     });
 
     if (res.ok) {
@@ -32,8 +33,8 @@ const AvailableRooms = async () => {
           </h2>
 
           <p className="mt-3 max-w-2xl text-slate-500">
-            Explore the latest study spaces and choose the room that
-            fits your learning style.
+            Explore the latest study spaces and choose the room that fits your
+            learning style.
           </p>
         </div>
 
@@ -59,12 +60,13 @@ const AvailableRooms = async () => {
           </h3>
 
           <p className="mt-2 text-slate-500">
-            No rooms are currently available. Check back soon for new study spaces.
+            No rooms are currently available. Check back soon for new study
+            spaces.
           </p>
 
           <Link
             href="/add-room"
-            className="mt-6 inline-flex rounded-xl bg-slate-900 px-6 py-3 font-semibold text-white hover:bg-slate-800 transition"
+            className="mt-6 inline-flex rounded-xl bg-slate-900 px-6 py-3 font-semibold text-white transition hover:bg-slate-800"
           >
             Add a Room
           </Link>
