@@ -14,7 +14,7 @@ export const auth = betterAuth({
   basePath: "/api/auth",
   secret: process.env.BETTER_AUTH_SECRET,
   trustedOrigins: [
-    "http://localhost:3000",
+    "https://studybook-sand.vercel.app",
   ],
   emailAndPassword: {
     enabled: true,
@@ -34,7 +34,7 @@ export const auth = betterAuth({
       maxAge: 7 * 24 * 60 * 60,
     },
   },
-  
+
   plugins: [
     jwt({
       sessionCookieCache: true,
