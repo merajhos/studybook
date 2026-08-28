@@ -55,7 +55,7 @@ export default function RoomDetailsClient({ room }) {
           Booking This Room
         </button>
       </div>
-            {/* modal */}
+           
       <BookingModal
         room={room}
         isOpen={isBookingOpen}
