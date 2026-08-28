@@ -24,22 +24,33 @@ export default function AddRoomForm() {
     setLoading(true);
 
     try {
+      
       const sessionRes = await authClient.getSession();
-      const token = sessionRes?.data?.session?.token || sessionRes?.data?.session?.id;
+      const session = sessionRes?.data?.session;
+      const user = sessionRes?.data?.user;
 
-      if (!sessionRes?.data?.user) {
+      if (!user) {
         toast.error('Please login first!');
         setLoading(false);
         return;
       }
 
+     
+      const token = session?.token || session?.id || '';
+
+      
+      const headers = {
+        'Content-Type': 'application/json',
+      };
+
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms`, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        credentials: 'include',
+        headers: headers,
+        credentials: 'include', // 👈 Cookie পাঠানোর জন্য
         body: JSON.stringify({ 
           ...formData, 
           capacity: Number(formData.capacity), 
@@ -57,6 +68,7 @@ export default function AddRoomForm() {
         toast.error(data.message || 'Failed to add room');
       }
     } catch (err) {
+      console.error('Fetch error:', err);
       toast.error('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
