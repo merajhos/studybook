@@ -1,5 +1,8 @@
 
 import AvailableRooms from "@/components/home/AvailableRooms";
+import HeroSection from "@/components/home/HeroSection";
+import HowItWorks from "@/components/home/HowItWorks";
+import WhyStudyNook from "@/components/home/WhyStudyNook";
 import Link from "next/link";
 
 export default async function HomePage() {
@@ -33,6 +36,10 @@ export default async function HomePage() {
 
       {/* Available Rooms Section */}
       <AvailableRooms />
+      <HeroSection></HeroSection>
+      <HowItWorks></HowItWorks>
+      <WhyStudyNook></WhyStudyNook>
+
     </main>
   );
 }

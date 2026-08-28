@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { signIn } from '@/lib/auth-client';
+import { authClient } from '@/lib/auth-client';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,25 +15,31 @@ export default function LoginPage() {
     document.title = 'StudyNook – Login';
   }, []);
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { data, error } = await signIn.email({
+      // authClient.signIn.email ব্যবহার করে লগইন
+      const res = await authClient.signIn.email({
         email: formData.email,
         password: formData.password,
         callbackURL: '/',
       });
 
-      if (error) {
-        toast.error(error.message || 'Invalid email or password');
+      if (res?.error) {
+        toast.error(res.error.message || 'Invalid email or password');
       } else {
         toast.success('Logged in successfully!');
         router.push('/');
       }
     } catch (err) {
-      toast.error('Invalid email or password');
+      toast.error(err?.message || 'Invalid email or password');
     } finally {
       setLoading(false);
     }
@@ -41,7 +47,8 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     try {
-      await signIn.social({
+      // authClient.signIn.social ব্যবহার করে গুগল লগইন
+      await authClient.signIn.social({
         provider: 'google',
         callbackURL: '/',
       });
@@ -53,33 +60,39 @@ export default function LoginPage() {
   return (
     <div className="max-w-md mx-auto my-16 p-8 bg-white rounded-2xl shadow-lg border border-slate-100">
       <h2 className="text-3xl font-extrabold text-slate-900 text-center mb-6">Welcome Back</h2>
-      
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
           <input
+            name="email"
             type="email"
             required
             placeholder="student@university.edu"
+            autoComplete="email"
             className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            value={formData.email}
+            onChange={handleChange}
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
           <input
+            name="password"
             type="password"
             required
             placeholder="••••••••"
+            autoComplete="current-password"
             className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            value={formData.password}
+            onChange={handleChange}
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition duration-200"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition duration-200 disabled:bg-indigo-400"
         >
           {loading ? 'Logging in...' : 'Login'}
         </button>
