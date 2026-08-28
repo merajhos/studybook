@@ -10,7 +10,7 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [cancellingId, setCancellingId] = useState(null);
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL ;
 
 
   const handleCancelBooking = async (id) => {
