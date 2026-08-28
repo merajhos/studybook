@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
-import RoomDetailsClient from "./RoomDetailsClient"; // Dynamic Client Component for Modals
+import RoomDetailsClient from "./RoomDetailsClient"; 
 
 async function getRoomDetails(id) {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   try {
     const res = await fetch(`${baseUrl}/rooms/${id}`, { cache: "no-store" });
     if (!res.ok) return null;
