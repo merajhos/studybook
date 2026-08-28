@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { signUp } from '@/lib/auth-client';
+import { authClient } from '@/lib/auth-client'; 
 import GoogleButton from '@/components/auth/GoogleButton';
 
 export default function RegisterPage() {
@@ -21,7 +21,6 @@ export default function RegisterPage() {
     e.preventDefault();
     setError('');
 
-  
     if (formData.password.length < 6) {
       return setError('Password must be at least 6 characters long.');
     }
@@ -35,7 +34,8 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const res = await signUp.email({
+     
+      const res = await authClient.signUp.email({
         name: formData.name,
         email: formData.email,
         password: formData.password,
