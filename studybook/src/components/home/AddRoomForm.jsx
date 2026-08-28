@@ -53,7 +53,7 @@ const handleSubmit = async (e) => {
   setLoading(true);
 
   try {
-    // Check logged-in user
+    // 1. Check current session
     const sessionRes = await authClient.getSession();
 
     console.log("Session:", sessionRes);
@@ -65,27 +65,29 @@ const handleSubmit = async (e) => {
       return;
     }
 
-    // Get JWT token from Better Auth JWT plugin
+    // 2. Get JWT token
     const tokenRes = await authClient.token();
 
-    console.log("Token response:", tokenRes);
+    console.log("JWT Token:", tokenRes);
 
     const token = tokenRes?.data?.token;
 
     if (!token) {
       console.error("JWT token not found:", tokenRes);
-
       toast.error("Authentication token not found. Please login again.");
       return;
     }
 
+    // 3. API URL
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     if (!apiUrl) {
+      console.error("NEXT_PUBLIC_API_URL is missing");
       toast.error("API URL is not configured.");
       return;
     }
 
+    // 4. Room data
     const roomData = {
       name: formData.name.trim(),
       description: formData.description.trim(),
@@ -98,6 +100,7 @@ const handleSubmit = async (e) => {
 
     console.log("Sending room:", roomData);
 
+    // 5. POST room
     const res = await fetch(`${apiUrl}/rooms`, {
       method: "POST",
 
@@ -115,6 +118,7 @@ const handleSubmit = async (e) => {
 
     console.log("Server response:", data);
 
+    // 6. Handle response
     if (!res.ok) {
       toast.error(data?.message || "Failed to add room");
       return;
