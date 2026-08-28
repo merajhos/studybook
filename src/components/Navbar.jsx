@@ -24,6 +24,9 @@ export default function Navbar() {
           <Link href="/" className="text-2xl font-black text-indigo-600">
             Home-StudyNook
           </Link>
+          <Link href="/add-room" className="text-slate-800 hover:text-indigo-600 font-bold bg-cyan-100 rounded-lg text-medium px-3 py-1.5">
+           Add Room
+          </Link>
 
          
           <div className="flex items-center gap-6">

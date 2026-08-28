@@ -51,7 +51,7 @@ export default function RoomDetailsClient({ room }) {
           onClick={() => setIsBookingOpen(true)}
           className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition"
         >
-          Book This Room
+          Booking This Room
         </button>
       </div>
 
