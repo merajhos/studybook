@@ -24,10 +24,10 @@ export default function AddRoomForm() {
     setLoading(true);
 
     try {
-      
+      // 1. Better Auth Session চেক
       const sessionRes = await authClient.getSession();
-      const session = sessionRes?.data?.session;
       const user = sessionRes?.data?.user;
+      const session = sessionRes?.data?.session;
 
       if (!user) {
         toast.error('Please login first!');
@@ -35,10 +35,9 @@ export default function AddRoomForm() {
         return;
       }
 
-     
+      // টোকেন পাসিং (Better Auth-এর সেশন আইডি বা টোকেন)
       const token = session?.token || session?.id || '';
 
-      
       const headers = {
         'Content-Type': 'application/json',
       };
@@ -47,10 +46,11 @@ export default function AddRoomForm() {
         headers['Authorization'] = `Bearer ${token}`;
       }
 
+      // 2. Fetch API Call
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms`, {
         method: 'POST',
         headers: headers,
-        credentials: 'include', // 👈 Cookie পাঠানোর জন্য
+        credentials: 'include', // Cross-origin cookie পাঠানোর জন্য আবশ্যক
         body: JSON.stringify({ 
           ...formData, 
           capacity: Number(formData.capacity), 
@@ -84,7 +84,7 @@ export default function AddRoomForm() {
         placeholder="Room Name" 
         required 
         value={formData.name}
-        className="w-full border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+        className="w-full border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800" 
         onChange={e => setFormData({...formData, name: e.target.value})} 
       />
       
@@ -92,7 +92,7 @@ export default function AddRoomForm() {
         placeholder="Description" 
         required 
         value={formData.description}
-        className="w-full border p-2.5 rounded-lg h-28 focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+        className="w-full border p-2.5 rounded-lg h-28 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800" 
         onChange={e => setFormData({...formData, description: e.target.value})} 
       />
       
@@ -101,7 +101,7 @@ export default function AddRoomForm() {
         placeholder="Image URL" 
         required 
         value={formData.image}
-        className="w-full border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+        className="w-full border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800" 
         onChange={e => setFormData({...formData, image: e.target.value})} 
       />
       
@@ -111,7 +111,7 @@ export default function AddRoomForm() {
           placeholder="Floor (e.g. 3rd Floor)" 
           required 
           value={formData.floor}
-          className="border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+          className="border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800" 
           onChange={e => setFormData({...formData, floor: e.target.value})} 
         />
         <input 
@@ -119,7 +119,7 @@ export default function AddRoomForm() {
           placeholder="Capacity" 
           required 
           value={formData.capacity}
-          className="border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+          className="border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800" 
           onChange={e => setFormData({...formData, capacity: e.target.value})} 
         />
         <input 
@@ -127,16 +127,16 @@ export default function AddRoomForm() {
           placeholder="Hourly Rate ($)" 
           required 
           value={formData.hourlyRate}
-          className="border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+          className="border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800" 
           onChange={e => setFormData({...formData, hourlyRate: e.target.value})} 
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-2">Amenities</label>
+        <label className="block text-sm font-medium mb-2 text-gray-700">Amenities</label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {AMENITY_OPTIONS.map(item => (
-            <label key={item} className="flex items-center gap-2 text-sm border p-2 rounded-lg cursor-pointer hover:bg-gray-50">
+            <label key={item} className="flex items-center gap-2 text-sm border p-2 rounded-lg cursor-pointer hover:bg-gray-50 text-gray-700">
               <input 
                 type="checkbox" 
                 checked={amenities.includes(item)} 
