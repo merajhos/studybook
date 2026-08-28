@@ -24,31 +24,21 @@ export default function AddRoomForm() {
     setLoading(true);
 
     try {
-      // Better Auth থেকে সেশন ডাটা নেওয়া
       const sessionRes = await authClient.getSession();
-      const user = sessionRes?.data?.user;
-      const session = sessionRes?.data?.session;
+      const token = sessionRes?.data?.session?.token || sessionRes?.data?.session?.id;
 
-      if (!user) {
+      if (!sessionRes?.data?.user) {
         toast.error('Please login first!');
         setLoading(false);
         return;
       }
 
-      const token = session?.token || session?.id || '';
-      const headers = {
-        'Content-Type': 'application/json',
-      };
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
-      // API Call
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL ;
-      const res = await fetch(`${apiUrl}/rooms`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms`, {
         method: 'POST',
-        headers: headers,
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         credentials: 'include',
         body: JSON.stringify({ 
           ...formData, 
@@ -67,7 +57,6 @@ export default function AddRoomForm() {
         toast.error(data.message || 'Failed to add room');
       }
     } catch (err) {
-      console.error('Fetch error:', err);
       toast.error('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
@@ -76,14 +65,14 @@ export default function AddRoomForm() {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow border space-y-4">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">Add New Study Room</h2>
+      <h2 className="text-2xl font-bold mb-4">Add New Study Room</h2>
       
       <input 
         type="text" 
         placeholder="Room Name" 
         required 
         value={formData.name}
-        className="w-full border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800" 
+        className="w-full border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
         onChange={e => setFormData({...formData, name: e.target.value})} 
       />
       
@@ -91,7 +80,7 @@ export default function AddRoomForm() {
         placeholder="Description" 
         required 
         value={formData.description}
-        className="w-full border p-2.5 rounded-lg h-28 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800" 
+        className="w-full border p-2.5 rounded-lg h-28 focus:outline-none focus:ring-2 focus:ring-indigo-500" 
         onChange={e => setFormData({...formData, description: e.target.value})} 
       />
       
@@ -100,7 +89,7 @@ export default function AddRoomForm() {
         placeholder="Image URL" 
         required 
         value={formData.image}
-        className="w-full border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800" 
+        className="w-full border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
         onChange={e => setFormData({...formData, image: e.target.value})} 
       />
       
@@ -110,7 +99,7 @@ export default function AddRoomForm() {
           placeholder="Floor (e.g. 3rd Floor)" 
           required 
           value={formData.floor}
-          className="border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800" 
+          className="border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
           onChange={e => setFormData({...formData, floor: e.target.value})} 
         />
         <input 
@@ -118,7 +107,7 @@ export default function AddRoomForm() {
           placeholder="Capacity" 
           required 
           value={formData.capacity}
-          className="border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800" 
+          className="border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
           onChange={e => setFormData({...formData, capacity: e.target.value})} 
         />
         <input 
@@ -126,16 +115,16 @@ export default function AddRoomForm() {
           placeholder="Hourly Rate ($)" 
           required 
           value={formData.hourlyRate}
-          className="border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800" 
+          className="border p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
           onChange={e => setFormData({...formData, hourlyRate: e.target.value})} 
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-2 text-gray-700">Amenities</label>
+        <label className="block text-sm font-medium mb-2">Amenities</label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {AMENITY_OPTIONS.map(item => (
-            <label key={item} className="flex items-center gap-2 text-sm border p-2 rounded-lg cursor-pointer hover:bg-gray-50 text-gray-700">
+            <label key={item} className="flex items-center gap-2 text-sm border p-2 rounded-lg cursor-pointer hover:bg-gray-50">
               <input 
                 type="checkbox" 
                 checked={amenities.includes(item)} 
