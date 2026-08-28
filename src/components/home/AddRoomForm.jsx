@@ -24,19 +24,17 @@ export default function AddRoomForm() {
     setLoading(true);
 
     try {
-      // 1. Better Auth Session চেক
-      const sessionRes = await authClient.getSession();
-      const user = sessionRes?.data?.user;
-      const session = sessionRes?.data?.session;
+      // Better Auth Session Fetch
+      const { data: sessionData } = await authClient.getSession();
 
-      if (!user) {
+      if (!sessionData?.user) {
         toast.error('Please login first!');
         setLoading(false);
         return;
       }
 
-      // টোকেন পাসিং (Better Auth-এর সেশন আইডি বা টোকেন)
-      const token = session?.token || session?.id || '';
+      // সেশন বা কুকি টোকেন বের করা
+      const token = sessionData?.session?.token || sessionData?.session?.id || '';
 
       const headers = {
         'Content-Type': 'application/json',
@@ -46,11 +44,10 @@ export default function AddRoomForm() {
         headers['Authorization'] = `Bearer ${token}`;
       }
 
-      // 2. Fetch API Call
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms`, {
         method: 'POST',
         headers: headers,
-        credentials: 'include', // Cross-origin cookie পাঠানোর জন্য আবশ্যক
+        credentials: 'include', // Cross-site cookie পাঠানোর জন্য প্রয়োজনীয়
         body: JSON.stringify({ 
           ...formData, 
           capacity: Number(formData.capacity), 
