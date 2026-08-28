@@ -9,7 +9,7 @@ export default async function HomePage() {
   return (
     <main className="min-h-screen bg-slate-50">
       {/* Hero Section */}
-      <section className="bg-slate-900 text-white py-20 px-5 text-center">
+      {/* <section className="bg-slate-900 text-white py-20 px-5 text-center">
         <div className="max-w-4xl mx-auto space-y-4">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">
             Find Your Ideal <span className="text-cyan-400">Study Space</span>
@@ -32,13 +32,13 @@ export default async function HomePage() {
             </Link>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Available Rooms Section */}
-      <AvailableRooms />
       <HeroSection></HeroSection>
-      <HowItWorks></HowItWorks>
+      <AvailableRooms />
       <WhyStudyNook></WhyStudyNook>
+      <HowItWorks></HowItWorks>
 
     </main>
   );
