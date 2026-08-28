@@ -1,15 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import { useSession, signOut } from '@/lib/auth-client';
+import { authClient } from '@/lib/auth-client';
 import toast from 'react-hot-toast';
 
 export default function Navbar() {
-  const { data: session, isPending } = useSession();
+
+  const { data: session, isPending } = authClient.useSession();
 
   const handleSignOut = async () => {
     try {
-      await signOut();
+      await authClient.signOut();
       toast.success('Logged out successfully!');
     } catch (error) {
       toast.error('Failed to log out');
@@ -22,17 +23,18 @@ export default function Navbar() {
         <div className="flex justify-between h-16 items-center">
           
           <Link href="/" className="text-2xl font-black text-indigo-600">
-            Home-StudyNook
+            StudyNook Home
           </Link>
-          <Link href="/add-room" className="text-slate-800 hover:text-indigo-600 font-bold bg-cyan-100 rounded-lg text-medium px-3 py-1.5">
-           Add Room
-          </Link>
+           <Link href="/add-room" className="text-slate-800 hover:text-indigo-600 font-bold bg-cyan-100 rounded-lg text-sm px-3 py-1.5">
+              Add Room
+            </Link>
 
-        
           <div className="flex items-center gap-6">
             <Link href="/rooms" className="text-slate-600 hover:text-indigo-600 font-medium text-sm">
               All Rooms
             </Link>
+
+           
 
             {!isPending && (
               <>
@@ -45,7 +47,6 @@ export default function Navbar() {
                       My Bookings
                     </Link>
 
-                  
                     <div className="flex items-center gap-3 ml-2">
                       {session.user?.image ? (
                         <img
