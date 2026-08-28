@@ -24,18 +24,18 @@ export default function AddRoomForm() {
     setLoading(true);
 
     try {
-      // Better Auth Session Fetch
-      const { data: sessionData } = await authClient.getSession();
+      // Better Auth থেকে সেশন ডাটা নেওয়া
+      const sessionRes = await authClient.getSession();
+      const user = sessionRes?.data?.user;
+      const session = sessionRes?.data?.session;
 
-      if (!sessionData?.user) {
+      if (!user) {
         toast.error('Please login first!');
         setLoading(false);
         return;
       }
 
-      // সেশন বা কুকি টোকেন বের করা
-      const token = sessionData?.session?.token || sessionData?.session?.id || '';
-
+      const token = session?.token || session?.id || '';
       const headers = {
         'Content-Type': 'application/json',
       };
@@ -44,10 +44,12 @@ export default function AddRoomForm() {
         headers['Authorization'] = `Bearer ${token}`;
       }
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms`, {
+      // API Call
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://study-server-eight.vercel.app';
+      const res = await fetch(`${apiUrl}/rooms`, {
         method: 'POST',
         headers: headers,
-        credentials: 'include', // Cross-site cookie পাঠানোর জন্য প্রয়োজনীয়
+        credentials: 'include',
         body: JSON.stringify({ 
           ...formData, 
           capacity: Number(formData.capacity), 
@@ -74,7 +76,7 @@ export default function AddRoomForm() {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow border space-y-4">
-      <h2 className="text-2xl font-bold mb-4">Add New Study Room</h2>
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">Add New Study Room</h2>
       
       <input 
         type="text" 
