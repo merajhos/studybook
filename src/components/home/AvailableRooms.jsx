@@ -4,7 +4,7 @@ import RoomCard from "./RoomCard";
 
 const AvailableRooms = async () => {
   let rooms = [];
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL ;
 
   try {
    

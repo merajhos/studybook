@@ -37,7 +37,7 @@ export default function BookingModal({ room, isOpen, onClose }) {
       const sessionRes = await authClient.getSession();
       const token = sessionRes?.data?.session?.token || sessionRes?.data?.session?.id;
 
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL ;
       
    
       const headers = {
