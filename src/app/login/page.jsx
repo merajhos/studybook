@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { signIn } from '@/lib/auth-client';
+import { authClient } from '@/lib/auth-client';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,7 +20,8 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { data, error } = await signIn.email({
+   
+      const { data, error } = await authClient.signIn.email({
         email: formData.email,
         password: formData.password,
         callbackURL: '/',
@@ -41,7 +42,8 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     try {
-      await signIn.social({
+   
+      await authClient.signIn.social({
         provider: 'google',
         callbackURL: '/',
       });

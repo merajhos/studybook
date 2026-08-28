@@ -1,8 +1,9 @@
 'use client';
 
+import { authClient } from '@/lib/auth-client';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { authClient } from '@/lib/auth-client'; 
+
 
 export default function GoogleButton({ label = "Continue with Google" }) {
   const [loading, setLoading] = useState(false);
@@ -10,7 +11,6 @@ export default function GoogleButton({ label = "Continue with Google" }) {
   const handleGoogleLogin = async () => {
     setLoading(true);
     try {
-    
       await authClient.signIn.social({
         provider: 'google',
         callbackURL: '/',
