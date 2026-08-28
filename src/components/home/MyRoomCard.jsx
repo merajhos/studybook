@@ -31,7 +31,7 @@ export default function MyRoomCard({ room, onRefresh }) {
           Delete
         </button>
       </div>
-
+        {/* modal */}
      
       <EditRoomModal
         room={room}
