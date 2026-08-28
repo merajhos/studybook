@@ -1,6 +1,8 @@
 import RoomCard from "@/components/home/RoomCard";
 
 
+export const dynamic = 'force-dynamic';
+
 async function getRooms() {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   try {
