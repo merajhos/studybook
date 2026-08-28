@@ -13,7 +13,7 @@ export default function MyListingsClient({ initialRooms, token, userProfile }) {
   const [editFormData, setEditFormData] = useState({ name: '', description: '', price: '' });
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
-  // Edit 
+  
   const handleOpenEdit = (room) => {
     setEditingRoom(room);
     setEditFormData({

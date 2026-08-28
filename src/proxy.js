@@ -16,7 +16,6 @@ if(!session) {
 
 }
  
-
  
 export const config = {
   matcher: ['/my-bookings/:path*',

@@ -28,7 +28,7 @@ export default function Navbar() {
            Add Room
           </Link>
 
-         
+        
           <div className="flex items-center gap-6">
             <Link href="/rooms" className="text-slate-600 hover:text-indigo-600 font-medium text-sm">
               All Rooms
