@@ -8,6 +8,7 @@ export default function RoomDetailsClient({ room }) {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   return (
+
     <div className="bg-white border rounded-2xl overflow-hidden shadow-sm">
       <div className="h-80 w-full relative bg-slate-100">
         <img
@@ -54,7 +55,7 @@ export default function RoomDetailsClient({ room }) {
           Booking This Room
         </button>
       </div>
-
+            {/* modal */}
       <BookingModal
         room={room}
         isOpen={isBookingOpen}
