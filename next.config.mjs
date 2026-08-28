@@ -1,15 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
-  reactCompiler: true,
-    images: {
-    remotePatterns: [
+  async rewrites() {
+    return [
       {
-        protocol: "https",
-        hostname: "**"
-      }
-    ]
-  }
+        source: '/api/backend/:path*',
+        destination: 'https://study-server-eight.vercel.app/:path*', 
+      },
+    ];
+  },
 };
 
 export default nextConfig;
