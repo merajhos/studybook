@@ -11,13 +11,21 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
 
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
+  // Helper function: ক্র্যাশ না করার জন্য Time Slot safely রেন্ডার করবে
+  const renderTimeSlot = (booking) => {
+    if (booking?.timeSlot) return booking.timeSlot;
+    if (booking?.startTime && booking?.endTime) {
+      return `${booking.startTime} - ${booking.endTime}`;
+    }
+    return 'Time not specified';
+  };
+
   // Booking Cancel Handler
   const handleCancelBooking = async (id) => {
     if (!window.confirm('Are you sure you want to cancel this booking?')) return;
 
     setCancellingId(id);
     try {
-      // 安全 Token validation & header construction
       const headers = {
         'Content-Type': 'application/json',
       };
@@ -64,14 +72,14 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
     <div className="grid gap-6">
       {bookings.map((booking) => (
         <div
-          key={booking._id}
+          key={booking?._id || Math.random()}
           className="flex flex-col sm:flex-row bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
         >
           {/* Room Image */}
           <div className="relative w-full sm:w-64 h-48 sm:h-auto bg-slate-100 dark:bg-slate-800 flex-shrink-0">
             <Image
-              src={booking.roomImage || booking.room?.image || 'https://images.unsplash.com/photo-1497366216548-37526070297c'}
-              alt={booking.roomName || 'Room'}
+              src={booking?.roomImage || booking?.room?.image || 'https://images.unsplash.com/photo-1497366216548-37526070297c'}
+              alt={booking?.roomName || 'Room'}
               fill
               sizes="(max-width: 640px) 100vw, 256px"
               className="object-cover"
@@ -84,27 +92,29 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
             <div>
               <div className="flex justify-between items-start mb-3">
                 <h3 className="text-xl font-bold text-slate-800 dark:text-white">
-                  {booking.roomName || 'Study Room'}
+                  {booking?.roomName || 'Study Room'}
                 </h3>
                 <span className="px-3 py-1 text-xs font-bold rounded-full capitalize bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-                  {booking.status || 'Confirmed'}
+                  {booking?.status || 'Confirmed'}
                 </span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50 p-3.5 rounded-xl border border-slate-100 dark:border-slate-800">
                 <div>
                   <span className="block text-xs font-bold text-slate-400 uppercase">Date</span>
-                  <span className="font-semibold">{booking.date}</span>
+                  <span className="font-semibold">{booking?.date || 'N/A'}</span>
                 </div>
                 <div>
                   <span className="block text-xs font-bold text-slate-400 uppercase">Time Slot</span>
                   <span className="font-semibold">
-                    {booking.timeSlot || `${booking.startTime} - ${booking.endTime}`}
+                    {renderTimeSlot(booking)}
                   </span>
                 </div>
                 <div>
                   <span className="block text-xs font-bold text-slate-400 uppercase">Total Cost</span>
-                  <span className="font-semibold text-indigo-600 dark:text-indigo-400">${booking.totalCost}</span>
+                  <span className="font-semibold text-indigo-600 dark:text-indigo-400">
+                    ${booking?.totalCost ?? 0}
+                  </span>
                 </div>
               </div>
             </div>
@@ -119,11 +129,11 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
               </button>
 
               <button
-                onClick={() => handleCancelBooking(booking._id)}
-                disabled={cancellingId === booking._id}
+                onClick={() => handleCancelBooking(booking?._id)}
+                disabled={cancellingId === booking?._id}
                 className="px-4 py-2 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 text-xs font-bold rounded-xl border border-rose-200 dark:border-rose-800 transition disabled:opacity-50"
               >
-                {cancellingId === booking._id ? 'Cancelling...' : 'Cancel Booking'}
+                {cancellingId === booking?._id ? 'Cancelling...' : 'Cancel Booking'}
               </button>
             </div>
           </div>
@@ -168,7 +178,7 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
                 )}
                 <div>
                   <p className="text-sm font-bold text-slate-800 dark:text-white">{userProfile?.name || 'User'}</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{userProfile?.email || selectedBooking.userEmail}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{userProfile?.email || selectedBooking?.userEmail || 'N/A'}</p>
                 </div>
               </div>
             </div>
@@ -177,23 +187,23 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
             <div className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
               <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-slate-400">Room Name:</span>
-                <span className="font-semibold text-slate-800 dark:text-white">{selectedBooking.roomName}</span>
+                <span className="font-semibold text-slate-800 dark:text-white">{selectedBooking?.roomName || 'N/A'}</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-slate-400">Booking ID:</span>
-                <span className="font-mono text-xs font-semibold">{selectedBooking._id}</span>
+                <span className="font-mono text-xs font-semibold">{selectedBooking?._id || 'N/A'}</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-slate-400">Date:</span>
-                <span className="font-semibold">{selectedBooking.date}</span>
+                <span className="font-semibold">{selectedBooking?.date || 'N/A'}</span>
               </div>
               <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-slate-400">Time Slot:</span>
                 <span className="font-semibold">
-                  {selectedBooking.timeSlot || `${selectedBooking.startTime} - ${selectedBooking.endTime}`}
+                  {renderTimeSlot(selectedBooking)}
                 </span>
               </div>
-              {selectedBooking.specialNote && (
+              {selectedBooking?.specialNote && (
                 <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
                   <span className="text-slate-400">Special Note:</span>
                   <span className="font-semibold italic">{selectedBooking.specialNote}</span>
@@ -201,7 +211,7 @@ export default function MyBookingsClient({ initialBookings, userProfile, token }
               )}
               <div className="flex justify-between py-1.5">
                 <span className="text-slate-400">Total Price:</span>
-                <span className="font-bold text-indigo-600 dark:text-indigo-400">${selectedBooking.totalCost}</span>
+                <span className="font-bold text-indigo-600 dark:text-indigo-400">${selectedBooking?.totalCost ?? 0}</span>
               </div>
             </div>
 

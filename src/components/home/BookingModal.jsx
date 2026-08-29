@@ -7,11 +7,12 @@ import { authClient } from '@/lib/auth-client';
 
 export default function BookingModal({ room, isOpen, onClose }) {
   const router = useRouter();
-  const today = new Date().toISOString().split('T')[0];
+  const { data: session } = authClient.useSession();
 
+  const today = new Date().toISOString().split('T')[0];
   const [date, setDate] = useState(today);
-  const [startTime, setStartTime] = useState('09:00');
-  const [endTime, setEndTime] = useState('11:00');
+  const [startTime, setStartTime] = useState('10:00');
+  const [endTime, setEndTime] = useState('12:00');
   const [specialNote, setSpecialNote] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -20,34 +21,28 @@ export default function BookingModal({ room, isOpen, onClose }) {
   const startHour = parseInt(startTime.split(':')[0], 10);
   const endHour = parseInt(endTime.split(':')[0], 10);
   const totalHours = endHour > startHour ? endHour - startHour : 0;
-  const hourlyRate = room.hourlyRate || room.price || 0;
+  const hourlyRate = room.hourlyRate || room.price || 3;
   const totalCost = totalHours * hourlyRate;
 
   const handleBooking = async (e) => {
     e.preventDefault();
 
+    if (!session) {
+      return toast.error('Please login first to book a room!');
+    }
+
     if (endHour <= startHour) {
-      return toast.error('End time must be strictly after start time!');
+      return toast.error('End time must be after start time!');
     }
 
     setLoading(true);
 
     try {
-      // ১. Better Auth থেকে Token এবং Session এক্সট্র্যাক্ট করা
-      let token = '';
-      if (typeof authClient.getToken === 'function') {
-        const tokenData = await authClient.getToken();
-        token = typeof tokenData === 'string' ? tokenData : tokenData?.token || '';
-      }
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://study-server-eight.vercel.app';
 
-      // যদি getToken() না থাকে, তবে Session থেকে এক্সট্র্যাক্ট করা
-      if (!token) {
-        const sessionRes = await authClient.getSession();
-        token = sessionRes?.data?.session?.token || sessionRes?.data?.session?.id || '';
-      }
+      // Better Auth Session Structure অনুযায়ী Safe Extraction
+      const token = session?.session?.token || session?.token || session?.user?.id;
 
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-      
       const headers = {
         'Content-Type': 'application/json',
       };
@@ -59,17 +54,17 @@ export default function BookingModal({ room, isOpen, onClose }) {
       const res = await fetch(`${baseUrl}/bookings`, {
         method: 'POST',
         headers: headers,
-        credentials: 'include', // Cookies পাস করার জন্য
+        credentials: 'include', // Cookie verification bypass prevent করার জন্য
         body: JSON.stringify({
           roomId: room._id,
-          roomName: room.name || room.title,
+          roomName: room.name || room.title || 'Study Room',
           roomImage: room.image || room.roomImage || '',
           date,
-          startTime,
-          endTime,
+          startTime: startTime || '10:00',
+          endTime: endTime || '12:00',
           timeSlot: `${startTime} - ${endTime}`,
-          totalCost,
-          specialNote,
+          totalCost: Number(totalCost) || 0,
+          specialNote: specialNote || '',
         }),
       });
 
@@ -81,7 +76,7 @@ export default function BookingModal({ room, isOpen, onClose }) {
         router.push('/my-bookings');
         router.refresh();
       } else {
-        toast.error(data.message || 'Booking failed!');
+        toast.error(data.message || 'Unauthorized: Invalid or expired token');
       }
     } catch (err) {
       console.error('Booking Error:', err);
@@ -95,7 +90,7 @@ export default function BookingModal({ room, isOpen, onClose }) {
     <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
       <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-100 dark:border-slate-800">
         <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-          Book {room.name || room.roomName || room.title}
+          Book {room.name || room.title || 'Room'}
         </h3>
 
         <form onSubmit={handleBooking} className="space-y-4">
