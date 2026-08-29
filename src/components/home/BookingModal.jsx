@@ -27,35 +27,41 @@ export default function BookingModal({ room, isOpen, onClose }) {
 const handleBooking = async (e) => {
     e.preventDefault();
 
+    // ১. ইউজার লগইন না থাকলে আগেই আটকে দিন
     if (!session) {
-      return toast.error("Please login first to book a room!");
+      return toast.error('Please log in first to book a room!');
     }
 
     if (endHour <= startHour) {
-      return toast.error("End time must be after start time!");
+      return toast.error('End time must be after start time!');
     }
 
     setLoading(true);
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://study-server-eight.vercel.app";
-
-      // Better Auth সেশন থেকে নিরাপদভাবে টোকেন বের করার সঠিক লজিক
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://study-server-eight.vercel.app';
+      
+      // Better Auth অনুযায়ী সেশন টোকেন এক্সট্রাক্ট করুন
       const token = session?.session?.token || session?.token || session?.user?.id;
 
-      console.log("Sending Token:", token); // ফ্রন্টএন্ড কনসোলে টোকেনটি প্রিন্ট হচ্ছে কিনা চেক করার জন্য
+      // টোকেন না থাকলে ব্রাউজারেই অ্যালার্ট দেখাবে
+      if (!token) {
+        toast.error("Session token not found. Please re-login.");
+        setLoading(false);
+        return;
+      }
 
       const res = await fetch(`${baseUrl}/bookings`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // হেডার পাস করা আবশ্যক
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // হেডার পাস
         },
-        credentials: "include",
+        credentials: 'include', // Cookie পাস করার জন্য
         body: JSON.stringify({
           roomId: room._id,
-          roomName: room.name || room.title || "Study Room",
-          roomImage: room.image || room.roomImage || "",
+          roomName: room.name || room.title || 'Study Room',
+          roomImage: room.image || room.roomImage || '',
           date,
           startTime,
           endTime,
@@ -68,21 +74,20 @@ const handleBooking = async (e) => {
       const data = await res.json();
 
       if (res.ok) {
-        toast.success("Room booked successfully!");
+        toast.success('Room booked successfully!');
         onClose();
-        router.push("/my-bookings");
+        router.push('/my-bookings');
         router.refresh();
       } else {
-        toast.error(data.message || "Unauthorized access");
+        toast.error(data.message || 'Unauthorized: Invalid or expired token');
       }
     } catch (err) {
-      console.error("Booking Error:", err);
-      toast.error("Something went wrong. Please try again!");
+      console.error('Booking Error:', err);
+      toast.error('Something went wrong. Please try again!');
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
       <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-100 dark:border-slate-800">
