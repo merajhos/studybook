@@ -47,94 +47,62 @@ export default function AddRoomForm() {
 
 const handleSubmit = async (e) => {
   e.preventDefault();
-
-  if (loading) return;
-
   setLoading(true);
 
   try {
-    // 1. Check current session
-    const sessionRes = await authClient.getSession();
+    // ১. ব্যাকএন্ডের সঠিক Base URL নিশ্চিত করুন (শেষে কোনো / থাকবে না)
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://study-server-eight.vercel.app";
 
-    console.log("Session:", sessionRes);
-
-    const user = sessionRes?.data?.user;
-
-    if (!user) {
-      toast.error("Please login first!");
-      return;
-    }
-
-    // 2. Get JWT token
-    const tokenRes = await authClient.token();
-
-    console.log("JWT Token:", tokenRes);
-
-    const token = tokenRes?.data?.token;
+    // ২. সেশন থেকে JWT টোকেন স্ট্রিং বের করা (অবজেক্ট যেন না হয়)
+    const token = session?.session?.token || session?.token || session?.user?.id;
 
     if (!token) {
-      console.error("JWT token not found:", tokenRes);
       toast.error("Authentication token not found. Please login again.");
+      setLoading(false);
       return;
     }
 
-    // 3. API URL
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-    if (!apiUrl) {
-      console.error("NEXT_PUBLIC_API_URL is missing");
-      toast.error("API URL is not configured.");
-      return;
-    }
-
-    // 4. Room data
+    // ৩. ডাটা পাঠানোর জন্য পে লোড তৈরি
     const roomData = {
-      name: formData.name.trim(),
-      description: formData.description.trim(),
-      image: formData.image.trim(),
-      floor: formData.floor.trim(),
+      name: formData.name,
+      description: formData.description, // নিশ্চিত করুন এটি ব্যাকএন্ডের মেসেজ নয়, টেক্সট
       capacity: Number(formData.capacity),
       hourlyRate: Number(formData.hourlyRate),
-      amenities,
+      floor: formData.floor,
+      image: formData.image,
+      amenities: formData.amenities || [],
     };
 
-    console.log("Sending room:", roomData);
-
-    // 5. POST room
-    const res = await fetch(`${apiUrl}/rooms`, {
+    // ৪. API হিট করা
+    const res = await fetch(`${baseUrl}/rooms`, {
       method: "POST",
-
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-
       credentials: "include",
-
       body: JSON.stringify(roomData),
     });
 
-    const data = await res.json();
-
-    console.log("Server response:", data);
-
-    // 6. Handle response
-    if (!res.ok) {
-      toast.error(data?.message || "Failed to add room");
-      return;
+    // Vercel 404 বা HTML পেজ পাঠালে তা হ্যান্ডেল করার জন্য
+    const text = await res.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (err) {
+      console.error("Server returned non-JSON response:", text);
+      throw new Error("Server URL endpoint not found (404). Check API base URL.");
     }
 
-    toast.success("Room added successfully!");
-
-    router.push("/my-listings");
-    router.refresh();
-
-  } catch (error) {
-    console.error("Submit Error:", error);
-
-    toast.error(
-      error?.message || "Something went wrong. Please try again."
-    );
+    if (res.ok && data.success) {
+      toast.success("Room added successfully!");
+      router.push("/rooms");
+    } else {
+      toast.error(data.message || "Failed to add room");
+    }
+  } catch (err) {
+    console.error("Submit Error:", err);
+    toast.error(err.message || "Something went wrong!");
   } finally {
     setLoading(false);
   }
