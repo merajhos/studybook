@@ -24,63 +24,60 @@ export default function BookingModal({ room, isOpen, onClose }) {
   const hourlyRate = room.hourlyRate || room.price || 3;
   const totalCost = totalHours * hourlyRate;
 
-  const handleBooking = async (e) => {
+const handleBooking = async (e) => {
     e.preventDefault();
 
     if (!session) {
-      return toast.error('Please login first to book a room!');
+      return toast.error("Please login first to book a room!");
     }
 
     if (endHour <= startHour) {
-      return toast.error('End time must be after start time!');
+      return toast.error("End time must be after start time!");
     }
 
     setLoading(true);
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://study-server-eight.vercel.app';
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://study-server-eight.vercel.app";
 
-      // Better Auth Session Structure অনুযায়ী Safe Extraction
+      // Better Auth সেশন থেকে নিরাপদভাবে টোকেন বের করার সঠিক লজিক
       const token = session?.session?.token || session?.token || session?.user?.id;
 
-      const headers = {
-        'Content-Type': 'application/json',
-      };
-
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
+      console.log("Sending Token:", token); // ফ্রন্টএন্ড কনসোলে টোকেনটি প্রিন্ট হচ্ছে কিনা চেক করার জন্য
 
       const res = await fetch(`${baseUrl}/bookings`, {
-        method: 'POST',
-        headers: headers,
-        credentials: 'include', // Cookie verification bypass prevent করার জন্য
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // হেডার পাস করা আবশ্যক
+        },
+        credentials: "include",
         body: JSON.stringify({
           roomId: room._id,
-          roomName: room.name || room.title || 'Study Room',
-          roomImage: room.image || room.roomImage || '',
+          roomName: room.name || room.title || "Study Room",
+          roomImage: room.image || room.roomImage || "",
           date,
-          startTime: startTime || '10:00',
-          endTime: endTime || '12:00',
+          startTime,
+          endTime,
           timeSlot: `${startTime} - ${endTime}`,
           totalCost: Number(totalCost) || 0,
-          specialNote: specialNote || '',
+          specialNote,
         }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        toast.success('Room booked successfully!');
+        toast.success("Room booked successfully!");
         onClose();
-        router.push('/my-bookings');
+        router.push("/my-bookings");
         router.refresh();
       } else {
-        toast.error(data.message || 'Unauthorized: Invalid or expired token');
+        toast.error(data.message || "Unauthorized access");
       }
     } catch (err) {
-      console.error('Booking Error:', err);
-      toast.error('Something went wrong. Please try again!');
+      console.error("Booking Error:", err);
+      toast.error("Something went wrong. Please try again!");
     } finally {
       setLoading(false);
     }
