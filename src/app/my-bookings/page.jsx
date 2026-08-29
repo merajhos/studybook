@@ -1,39 +1,93 @@
-import MyBookingsClient from '@/components/bookings/MyBookingsClient';
-import { auth } from '@/lib/auth';
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
+import MyBookingsClient from "@/components/bookings/MyBookingsClient";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+
+export const metadata = {
+  title: "StudyNook – My Bookings",
+};
 
 export default async function MyBookingsPage() {
   const reqHeaders = await headers();
 
-  const session = await auth.api.getSession({ headers: reqHeaders });
+  // Better Auth session
+  const session = await auth.api.getSession({
+    headers: reqHeaders,
+  });
+
+  // Login না থাকলে login page
   if (!session?.user) {
-    redirect('/login');
+    redirect("/login");
   }
 
-  // Token safely extract করা
-  const tokenData = await auth.api.getToken({ headers: reqHeaders });
-  const rawToken = typeof tokenData === 'string' ? tokenData : tokenData?.token;
-  const token = typeof rawToken === 'object' ? rawToken?.token || '' : rawToken || '';
+  // Better Auth JWT token
+  let token = "";
 
-  let initialBookings = [];
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings/my-bookings`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      cache: 'no-store',
+    const tokenData = await auth.api.getToken({
+      headers: reqHeaders,
     });
 
-    if (res.ok) {
-      const data = await res.json();
-      initialBookings = Array.isArray(data) ? data : data?.bookings || [];
-    } else {
-      console.error('Fetch bookings returned status:', res.status);
+    console.log("Token data:", tokenData);
+
+    if (typeof tokenData === "string") {
+      token = tokenData;
+    } else if (tokenData?.token) {
+      token = tokenData.token;
     }
   } catch (error) {
-    console.error('Failed to fetch initial bookings:', error);
+    console.error("Failed to get JWT token:", error);
+  }
+
+  let initialBookings = [];
+
+  // Backend থেকে bookings fetch
+  if (token) {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+      if (!apiUrl) {
+        console.error("NEXT_PUBLIC_API_URL is missing");
+      } else {
+        const res = await fetch(
+          `${apiUrl}/bookings/my-bookings`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            cache: "no-store",
+          }
+        );
+
+        console.log(
+          "My bookings API status:",
+          res.status
+        );
+
+        if (res.ok) {
+          const data = await res.json();
+
+          initialBookings = Array.isArray(data)
+            ? data
+            : data?.bookings || [];
+        } else {
+          const errorText = await res.text();
+
+          console.error(
+            "Bookings API error:",
+            res.status,
+            errorText
+          );
+        }
+      }
+    } catch (error) {
+      console.error(
+        "Failed to fetch initial bookings:",
+        error
+      );
+    }
   }
 
   return (
@@ -42,15 +96,16 @@ export default async function MyBookingsPage() {
         <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">
           My Bookings
         </h1>
+
         <p className="text-slate-600 dark:text-slate-400 mt-1">
           View your booked rooms and manage your reservations.
         </p>
       </div>
 
-      <MyBookingsClient 
-        initialBookings={initialBookings} 
-        token={token} 
-        userProfile={session.user} 
+      <MyBookingsClient
+        initialBookings={initialBookings}
+        token={token}
+        userProfile={session.user}
       />
     </main>
   );
