@@ -55,9 +55,9 @@ const handleBooking = async (e) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, // হেডার পাস
+          'Authorization': `Bearer ${token}`,
         },
-        credentials: 'include', // Cookie পাস করার জন্য
+        credentials: 'include', 
         body: JSON.stringify({
           roomId: room._id,
           roomName: room.name || room.title || 'Study Room',
