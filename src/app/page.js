@@ -1,4 +1,4 @@
-
+export const dynamic = "force-dynamic";
 import AvailableRooms from "@/components/home/AvailableRooms";
 import HeroSection from "@/components/home/HeroSection";
 import HowItWorks from "@/components/home/HowItWorks";
