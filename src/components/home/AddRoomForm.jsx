@@ -24,29 +24,38 @@ export default function AddRoomForm() {
     setLoading(true);
 
     try {
-      const sessionRes = await authClient.getSession();
-      const token = sessionRes?.data?.session?.token || sessionRes?.data?.session?.id;
+     const sessionRes = await authClient.getSession();
 
-      if (!sessionRes?.data?.user) {
-        toast.error('Please login first!');
-        setLoading(false);
-        return;
-      }
+if (!sessionRes?.data?.user) {
+  toast.error("Please login first!");
+  setLoading(false);
+  return;
+}
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rooms`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        credentials: 'include',
-        body: JSON.stringify({ 
-          ...formData, 
-          capacity: Number(formData.capacity), 
-          hourlyRate: Number(formData.hourlyRate), 
-          amenities 
-        })
-      });
+const tokenRes = await authClient.getToken();
+
+const token =
+  tokenRes?.data?.token ||
+  tokenRes?.token ||
+  "";
+
+const res = await fetch(
+  `${process.env.NEXT_PUBLIC_API_URL}/rooms`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    credentials: "include",
+    body: JSON.stringify({
+      ...formData,
+      capacity: Number(formData.capacity),
+      hourlyRate: Number(formData.hourlyRate),
+      amenities,
+    }),
+  }
+);
 
       const data = await res.json();
 

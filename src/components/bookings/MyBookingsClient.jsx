@@ -10,12 +10,11 @@ export default function MyBookingsClient({
   token,
 }) {
   const [bookings, setBookings] = useState(initialBookings || []);
-
   const [selectedBooking, setSelectedBooking] = useState(null);
-
   const [cancellingId, setCancellingId] = useState(null);
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+  const baseUrl =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
   // -----------------------------
   // Time Slot
@@ -42,15 +41,10 @@ export default function MyBookingsClient({
     }
 
     const confirmed = window.confirm(
-      "Are you sure you want to cancel this booking?",
+      "Are you sure you want to cancel this booking?"
     );
 
     if (!confirmed) return;
-
-    if (!baseUrl) {
-      toast.error("API URL is not configured.");
-      return;
-    }
 
     setCancellingId(id);
 
@@ -72,18 +66,18 @@ export default function MyBookingsClient({
 
       if (!res.ok) {
         toast.error(data?.message || "Failed to cancel booking");
-
         return;
       }
 
       toast.success("Booking cancelled successfully!");
 
-      setBookings((prev) => prev.filter((booking) => booking._id !== id));
+      setBookings((prev) =>
+        prev.filter((booking) => booking._id !== id)
+      );
 
       setSelectedBooking(null);
     } catch (error) {
       console.error("Cancel booking error:", error);
-
       toast.error("Network error. Could not cancel booking.");
     } finally {
       setCancellingId(null);
@@ -124,18 +118,20 @@ export default function MyBookingsClient({
           >
             {/* Room Image */}
             <div className="relative w-full sm:w-64 h-48 sm:h-auto bg-slate-100 dark:bg-slate-800 flex-shrink-0">
-              <Image
-                src={
-                  booking?.roomImage ||
-                  booking?.room?.image ||
-                  "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=900&q=80"
-                }
-                alt={booking?.roomName || "Study Room"}
-                fill
-                sizes="(max-width: 640px) 100vw, 256px"
-                className="object-cover"
-                unoptimized
-              />
+              {booking?.roomImage ? (
+                <Image
+                  src={booking.roomImage}
+                  alt={booking?.roomName || "Study Room"}
+                  fill
+                  sizes="(max-width: 640px) 100vw, 256px"
+                  className="object-cover"
+                  unoptimized
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-slate-400 text-sm">
+                  No Image
+                </div>
+              )}
             </div>
 
             {/* Booking Info */}
@@ -211,10 +207,11 @@ export default function MyBookingsClient({
         ))}
       </div>
 
-      {/* Modal */}
+      {/* Booking Details Modal */}
       {selectedBooking && (
         <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
           <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 border border-slate-200 dark:border-slate-800">
+            
             {/* Header */}
             <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-4">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white">
@@ -229,6 +226,19 @@ export default function MyBookingsClient({
                 ✕
               </button>
             </div>
+
+            {/* Room Image in Modal */}
+            {selectedBooking?.roomImage && (
+              <div className="relative w-full h-48 rounded-2xl overflow-hidden">
+                <Image
+                  src={selectedBooking.roomImage}
+                  alt={selectedBooking?.roomName || "Study Room"}
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+            )}
 
             {/* User Profile */}
             <div className="bg-indigo-50/60 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50 p-4 rounded-2xl">
@@ -260,7 +270,9 @@ export default function MyBookingsClient({
                   </p>
 
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    {userProfile?.email || selectedBooking?.userEmail || "N/A"}
+                    {userProfile?.email ||
+                      selectedBooking?.userEmail ||
+                      "N/A"}
                   </p>
                 </div>
               </div>
