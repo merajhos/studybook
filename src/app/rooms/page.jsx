@@ -1,7 +1,5 @@
 import RoomCard from "@/components/home/RoomCard";
 
-// Next.js-কে নির্দেশ দেওয়া হচ্ছে যেন পেজটি সবসময় Dynamic রেন্ডার করে
-export const dynamic = "force-dynamic";
 
 async function getRooms() {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
